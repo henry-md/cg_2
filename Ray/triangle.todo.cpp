@@ -1,0 +1,118 @@
+#include <cmath>
+#include <Util/exceptions.h>
+#include "triangle.h"
+
+using namespace Ray;
+using namespace Util;
+
+//////////////
+// Triangle //
+//////////////
+
+
+Point3D cross(Point3D a, Point3D b) {
+	double i = a[1] * b[2] - a[2] * b[1];
+	double j = -1 * (a[0] * b[2] - a[2] * b[0]);
+	double k = a[0] * b[1] - a[1] * b[0];
+	return Point3D(i, j, k);
+}
+
+void Triangle::init( const LocalSceneData &data )
+{
+	_primitiveNum = 1;
+	// Set the vertex pointers
+	for( int i=0 ; i<3 ; i++ )
+	{
+		if( _vIndices[i]==-1 ) THROW( "negative vertex index:" , _vIndices[i] );
+		else if( _vIndices[i]>=data.vertices.size() ) THROW( "vertex index out of bounds: " , _vIndices[i] , " <= " , data.vertices.size() );
+		else _v[i] = &data.vertices[ _vIndices[i] ];
+	}
+
+	///////////////////////////////////
+	// Do any additional set-up here //
+	///////////////////////////////////
+	WARN_ONCE( "method undefined" );
+
+	// get normal
+	Point3D p0 = _v[0]->position;
+	Point3D p1 = _v[1]->position;
+	Point3D p2 = _v[2]->position;
+	Point3D v1 = p1 - p0;
+	Point3D v2 = p2 - p0;
+	n = cross(v1, v2);
+	n /= n.length();
+
+	// // compute center
+	// p = (p0 + p1 + p2) / 3.0;
+}
+
+void Triangle::updateBoundingBox( void )
+{
+	///////////////////////////////
+	// Set the _bBox object here //
+	///////////////////////////////
+	WARN_ONCE( "method undefined" );
+}
+
+void Triangle::initOpenGL( void )
+{
+	///////////////////////////
+	// Do OpenGL set-up here //
+	///////////////////////////
+	WARN_ONCE( "method undefined" );
+
+	// Sanity check to make sure that OpenGL state is good
+	ASSERT_OPEN_GL_STATE();	
+}
+
+bool Triangle::processFirstIntersection( const Util::Ray3D &ray , const Util::BoundingBox1D &range , const RayIntersectionFilter &rFilter , const RayIntersectionKernel &rKernel , ShapeProcessingInfo spInfo , unsigned int tIdx ) const
+{
+	RayTracingStats::IncrementRayPrimitiveIntersectionNum();
+
+	/////////////////////////////////////////////////////////////
+	// Compute the intersection of the shape with the ray here //
+	/////////////////////////////////////////////////////////////
+	// WARN_ONCE( "method undefined" );
+	// return false;
+
+	// compute time to intersection
+	Point3D p0 = _v[0]->position;
+	Point3D v0 = ray.position;
+	Point3D v = ray.direction;
+	double t = n.dot(p0 - v0) / (n.dot(v)); // 
+
+	// check if time of intersectin is valid
+	if (t < range[0][0] || t > range[1][0]) return false;
+
+	// check alpha, beta, gamma Barycentric coordinates
+	Point3D p = ray(t);
+	Point3D v1 = _v[0]->position;
+	Point3D v2 = _v[1]->position;
+	Point3D v3 = _v[2]->position;
+	double alpha = (cross(v2 - p, v3 - p).dot(n) / 2.0) / (cross(v2 - v1, v3 - v1).dot(n) / 2.0);
+	double beta = (cross(v3 - p, v1 - p).dot(n) / 2.0) / (cross(v3 - v2, v1 - v2).dot(n) / 2.0);
+	double gamma = (cross(v1 - p, v2 - p).dot(n) / 2.0) / (cross(v1 - v3, v2 - v3).dot(n) / 2.0);
+
+	// check if barycentric coordinates are positive
+	if (alpha < 0 || beta < 0 || gamma < 0) return false;
+
+	// make intersection info and invoke rKernel
+	RayShapeIntersectionInfo rsii = RayShapeIntersectionInfo();
+	rsii.t = t;
+	rsii.position = p;
+	rsii.normal = n;
+	rsii.texture = Point2D(0, 0); // TODO: figure out how to get texture coords
+	rKernel(spInfo, rsii);
+	return true;
+}
+
+void Triangle::drawOpenGL( GLSLProgram * glslProgram ) const
+{
+	//////////////////////////////
+	// Do OpenGL rendering here //
+	//////////////////////////////
+	WARN_ONCE( "method undefined" );
+
+	// Sanity check to make sure that OpenGL state is good
+	ASSERT_OPEN_GL_STATE();	
+}
