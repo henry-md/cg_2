@@ -35,13 +35,30 @@ Point3D Scene::getColor( Ray3D ray , int rDepth , Point3D cLimit , unsigned int 
 	ShapeProcessingInfo spInfo;
 	RayIntersectionFilter rFilter = []( double ){ return true; };
 	// sets color of intersected ray
-	RayIntersectionKernel rKernel = [&]( const ShapeProcessingInfo &spInfo , const RayShapeIntersectionInfo &_iInfo )
-	{
+	RayIntersectionKernel rKernel = [&]( const ShapeProcessingInfo &spInfo , const RayShapeIntersectionInfo &_iInfo ) {
 		/////////////////////////////////////////////////////////
 		// Create the computational kernel that gets the color //
 		/////////////////////////////////////////////////////////
-		// WARN_ONCE( "method undefined" );
-		color = Point3D( 1. , 1. , 1. ); // color white on hit
+
+		color += spInfo.material->emissive;
+
+		// loop over light sources in scene
+		std::vector< Light * > lights = _globalData.lights;
+		for (int i = 0; i < lights.size(); i++) {
+			Light *light = lights[i];
+			color += light->getAmbient(ray, _iInfo, *spInfo.material);
+			color += light->getDiffuse(ray, _iInfo, *spInfo.material);
+			color += light->getSpecular(ray, _iInfo, *spInfo.material);
+		}
+
+		// Point3D emissive = spInfo.material->emissive;
+		// Point3D ambient = spInfo.material->ambient;
+		// Point3D diffuse = spInfo.material->diffuse;
+		// Point3D specular = spInfo.material->specular;
+		// color += emissive;
+		// color += ambient;
+		// color += diffuse;
+		// color += specular;
 		return true;
 	};
 

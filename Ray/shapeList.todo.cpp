@@ -72,7 +72,6 @@ bool ShapeList::processFirstIntersection( const Ray3D &ray , const BoundingBox1D
 		s->processFirstIntersection(ray, range, rFilter, k, spInfo, tIdx);
 	}
 
-
 	if (hit) rKernel(spInfo, iInfo);
 	return hit;
 }

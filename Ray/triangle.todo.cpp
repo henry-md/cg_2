@@ -4,6 +4,7 @@
 
 using namespace Ray;
 using namespace Util;
+using namespace std;
 
 //////////////
 // Triangle //
@@ -79,7 +80,7 @@ bool Triangle::processFirstIntersection( const Util::Ray3D &ray , const Util::Bo
 	Point3D p0 = _v[0]->position;
 	Point3D v0 = ray.position;
 	Point3D v = ray.direction;
-	double t = n.dot(p0 - v0) / (n.dot(v)); // 
+	double t = n.dot(p0 - v0) / (n.dot(v)); // derived in notes
 
 	// check if time of intersectin is valid
 	if (t < range[0][0] || t > range[1][0]) return false;

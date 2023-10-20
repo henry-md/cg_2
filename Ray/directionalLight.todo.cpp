@@ -5,6 +5,7 @@
 
 using namespace Ray;
 using namespace Util;
+using namespace std;
 
 //////////////////////
 // DirectionalLight //
@@ -15,8 +16,9 @@ Point3D DirectionalLight::getAmbient( Ray3D ray , const RayShapeIntersectionInfo
 	////////////////////////////////////////////////////
 	// Get the ambient contribution of the light here //
 	////////////////////////////////////////////////////
-	WARN_ONCE( "method undefined" );
-	return Point3D();
+	// WARN_ONCE( "method undefined" );
+	// return Point3D();
+	return _ambient * material.ambient;
 }
 
 Point3D DirectionalLight::getDiffuse( Ray3D ray , const RayShapeIntersectionInfo &iInfo , const Material &material ) const
@@ -24,8 +26,16 @@ Point3D DirectionalLight::getDiffuse( Ray3D ray , const RayShapeIntersectionInfo
 	////////////////////////////////////////////////////
 	// Get the diffuse contribution of the light here //
 	////////////////////////////////////////////////////
-	WARN_ONCE( "method undefined" );
-	return Point3D();
+	Point3D N = iInfo.normal;
+	Point3D L = -1 * _direction;
+	Point3D K_d = material.diffuse;
+	Point3D I = _diffuse; // intensity of light source after attenuation (should I be attenuating?)
+	// if ((ray.direction[0] - 0) < 0.1 && (ray.direction[1] + 0.707107) < 0.1 && (ray.direction[2] + 0.707107) < 0.1) {
+	// 	cout << "ray in pointLight.todo: " << ray.direction << endl;
+	// }
+	return K_d * (N.dot(L)) * I;
+	// WARN_ONCE( "method undefined" );
+	// return Point3D();
 }
 
 Point3D DirectionalLight::getSpecular( Ray3D ray , const RayShapeIntersectionInfo &iInfo , const Material &material ) const
@@ -33,8 +43,14 @@ Point3D DirectionalLight::getSpecular( Ray3D ray , const RayShapeIntersectionInf
 	/////////////////////////////////////////////////////
 	// Get the specular contribution of the light here //
 	/////////////////////////////////////////////////////
-	WARN_ONCE( "method undefined" );
-	return Point3D();
+	// WARN_ONCE( "method undefined" );
+	// return Point3D();
+	Point3D V = -1 * ray.direction;
+	Point3D R = 2 * abs(iInfo.normal.dot(_direction)) * (iInfo.normal) + _direction;
+	Point3D K_s = material.specular;
+	Point3D I = _specular;
+	double n = material.specularFallOff;
+	return K_s * pow(V.dot(R), n) * I;
 }
 
 bool DirectionalLight::isInShadow( const RayShapeIntersectionInfo& iInfo , const Shape &shape , unsigned int tIdx ) const

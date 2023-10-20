@@ -93,6 +93,9 @@ bool Sphere::processFirstIntersection( const Ray3D &ray , const BoundingBox1D &r
 	Point3D normal = rsii.position - center;
 	rsii.normal = normal / normal.length();
 	rsii.texture = Point2D(0, 0); // TODO: figure out how to get texture coords
+
+	// edit everything in spInfo
+	
 	rKernel(spInfo, rsii);
 	return true;
 }

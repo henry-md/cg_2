@@ -5,6 +5,7 @@
 
 using namespace Ray;
 using namespace Util;
+using namespace std;
 
 ///////////////
 // SpotLight //
@@ -23,6 +24,7 @@ Point3D SpotLight::getDiffuse( Ray3D ray , const RayShapeIntersectionInfo &iInfo
 	////////////////////////////////////////////////////
 	// Get the diffuse contribution of the light here //
 	////////////////////////////////////////////////////
+	cout << 'spotlight here' << endl;
 	WARN_ONCE( "method undefined" );
 	return Point3D();
 }
