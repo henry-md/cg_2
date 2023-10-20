@@ -91,6 +91,7 @@ bool ShapeList::isInside( Point3D p ) const
 	return false;
 }
 
+/* Initialize the local-to-global position transform Ray::StaticAffineShape::_inverseTransform and the local-to-global normal transform */
 void ShapeList::init( const LocalSceneData &data )
 {
 	// Initialize the children
@@ -101,7 +102,16 @@ void ShapeList::init( const LocalSceneData &data )
 	///////////////////////////////////
 	// Do any additional set-up here //
 	///////////////////////////////////
-	WARN_ONCE( "method undefined" );
+	// WARN_ONCE( "method undefined" );
+
+	// initialize bounding box
+	// _bBox = BoundingBox3D();
+	// for (const Shape *s : shapes) {
+	// 	_bBox += s->boundingBox();
+	// }
+
+	// initialize inverse transform
+	_inverseTransform = Util::Matrix4D::Identity();
 }
 
 void ShapeList::updateBoundingBox( void )

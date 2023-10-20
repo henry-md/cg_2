@@ -26,16 +26,12 @@ Point3D DirectionalLight::getDiffuse( Ray3D ray , const RayShapeIntersectionInfo
 	////////////////////////////////////////////////////
 	// Get the diffuse contribution of the light here //
 	////////////////////////////////////////////////////
+
 	Point3D N = iInfo.normal;
 	Point3D L = -1 * _direction;
 	Point3D K_d = material.diffuse;
 	Point3D I = _diffuse; // intensity of light source after attenuation (should I be attenuating?)
-	// if ((ray.direction[0] - 0) < 0.1 && (ray.direction[1] + 0.707107) < 0.1 && (ray.direction[2] + 0.707107) < 0.1) {
-	// 	cout << "ray in pointLight.todo: " << ray.direction << endl;
-	// }
 	return K_d * (N.dot(L)) * I;
-	// WARN_ONCE( "method undefined" );
-	// return Point3D();
 }
 
 Point3D DirectionalLight::getSpecular( Ray3D ray , const RayShapeIntersectionInfo &iInfo , const Material &material ) const
@@ -43,8 +39,7 @@ Point3D DirectionalLight::getSpecular( Ray3D ray , const RayShapeIntersectionInf
 	/////////////////////////////////////////////////////
 	// Get the specular contribution of the light here //
 	/////////////////////////////////////////////////////
-	// WARN_ONCE( "method undefined" );
-	// return Point3D();
+
 	Point3D V = -1 * ray.direction;
 	Point3D R = 2 * abs(iInfo.normal.dot(_direction)) * (iInfo.normal) + _direction;
 	Point3D K_s = material.specular;
@@ -58,8 +53,19 @@ bool DirectionalLight::isInShadow( const RayShapeIntersectionInfo& iInfo , const
 	//////////////////////////////////////////////
 	// Determine if the light is in shadow here //
 	//////////////////////////////////////////////
-	WARN_ONCE( "method undefined" );
-	return false;
+
+	Ray3D shadowRay = Ray3D(iInfo.position, -1 * _direction);
+	Shape *shapePtr = (Shape *) &shape;
+	RayShapeIntersectionInfo iInfo2;
+	const BoundingBox1D range = BoundingBox1D(1e-10, 1000000);
+	const AffineShape::RayIntersectionFilter rFilter = []( double ){ return true; };
+	const AffineShape::RayIntersectionKernel rKernel = [&]( const AffineShape::ShapeProcessingInfo &spInfo , const RayShapeIntersectionInfo &_iInfo ) {
+		// iInfo2 = _iInfo;
+		return true;
+	};
+	const AffineShape::ShapeProcessingInfo spInfo = AffineShape::ShapeProcessingInfo();
+	bool intersect = shapePtr->processFirstIntersection(shadowRay, range, rFilter, rKernel, spInfo, tIdx);
+	return intersect;
 }
 
 Point3D DirectionalLight::transparency( const RayShapeIntersectionInfo &iInfo , const Shape &shape , Point3D cLimit , unsigned int samples , unsigned int tIdx ) const

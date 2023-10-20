@@ -47,6 +47,7 @@ Point3D Scene::getColor( Ray3D ray , int rDepth , Point3D cLimit , unsigned int 
 		for (int i = 0; i < lights.size(); i++) {
 			Light *light = lights[i];
 			color += light->getAmbient(ray, _iInfo, *spInfo.material);
+			if (light->isInShadow(_iInfo, *this, tIdx)) continue;
 			color += light->getDiffuse(ray, _iInfo, *spInfo.material);
 			color += light->getSpecular(ray, _iInfo, *spInfo.material);
 		}
