@@ -79,7 +79,7 @@ bool Sphere::processFirstIntersection( const Ray3D &ray , const BoundingBox1D &r
 	double left_bound = range[0][0], right_bound = range[1][0]; // first idx takes point<1> to double
 	double closest_time = Infinity;
 	for (int i = 0; i < rootNum; i++) {
-		if (left_bound <= roots[i] && roots[i] <= right_bound && roots[i] < closest_time) {
+		if (left_bound <= roots[i] && roots[i] <= right_bound && roots[i] < closest_time && rFilter(roots[i])) {
 			closest_time = roots[i];
 		}
 	}
@@ -100,6 +100,7 @@ bool Sphere::processFirstIntersection( const Ray3D &ray , const BoundingBox1D &r
 	return true;
 }
 
+/* processes all shapes which intersect the ray within the prescribed range and passing the rFilter test, invoking the rKernel kernel with the intersection information. The processing terminates early if the kernel returns false. The function returns the number of valid intersections.*/
 int Sphere::processAllIntersections( const Ray3D &ray , const BoundingBox1D &range , const RayIntersectionFilter &rFilter , const RayIntersectionKernel &rKernel , ShapeProcessingInfo spInfo , unsigned int tIdx ) const
 {
 	RayTracingStats::IncrementRayPrimitiveIntersectionNum();
@@ -108,8 +109,29 @@ int Sphere::processAllIntersections( const Ray3D &ray , const BoundingBox1D &ran
 	//////////////////////////////////////////////////////////////
 	// Compute the intersection of the sphere with the ray here //
 	//////////////////////////////////////////////////////////////
-	WARN_ONCE( "method undefined" );
-	return 0;
+
+	// get intersection with this sphere & given ray
+	Util::Polynomial1D< 2 > intersection = poly(ray);
+	double roots[2];
+	unsigned int rootNum = intersection.roots(roots);
+
+	// find ALL intersections
+	int cnt = 0;
+	double left_bound = range[0][0], right_bound = range[1][0]; // first idx takes point<1> to double
+	for (int i = 0; i < rootNum; i++) {
+		if (left_bound <= roots[i] && roots[i] <= right_bound && rFilter(roots[i])) {
+			// make intersection info and invoke rKernel
+			RayShapeIntersectionInfo rsii = RayShapeIntersectionInfo();
+			rsii.t = roots[i];
+			rsii.position = ray(roots[i]);
+			Point3D normal = rsii.position - center;
+			rsii.normal = normal / normal.length();
+			rsii.texture = Point2D(0, 0); // TODO: figure out how to get texture coords
+			rKernel(spInfo, rsii);
+		}
+	}
+
+	return cnt;
 }
 
 bool Sphere::isInside( Point3D p ) const

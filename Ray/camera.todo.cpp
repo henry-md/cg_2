@@ -45,6 +45,7 @@ Ray3D Camera::getRay( int i , int j , int width , int height ) const
 
 	Point3D p_ud_up = p_ud.dot(up) * up;
 	Point3D dir = p_lr + p_ud_up;
+	dir /= dir.length();
 
 	ray.direction = dir;
 

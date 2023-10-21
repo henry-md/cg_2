@@ -45,6 +45,7 @@ Point3D DirectionalLight::getSpecular( Ray3D ray , const RayShapeIntersectionInf
 	Point3D K_s = material.specular;
 	Point3D I = _specular;
 	double n = material.specularFallOff;
+	// cout << "K_s " << K_s << " V " << V << " R " << R << " dot prod " << V.dot(R) << " I " << I << endl;
 	return K_s * pow(V.dot(R), n) * I;
 }
 
@@ -54,15 +55,12 @@ bool DirectionalLight::isInShadow( const RayShapeIntersectionInfo& iInfo , const
 	// Determine if the light is in shadow here //
 	//////////////////////////////////////////////
 
-	Ray3D shadowRay = Ray3D(iInfo.position, -1 * _direction);
+	Ray3D shadowRay = Ray3D(iInfo.position, -_direction);
 	Shape *shapePtr = (Shape *) &shape;
 	RayShapeIntersectionInfo iInfo2;
 	const BoundingBox1D range = BoundingBox1D(1e-10, 1000000);
 	const AffineShape::RayIntersectionFilter rFilter = []( double ){ return true; };
-	const AffineShape::RayIntersectionKernel rKernel = [&]( const AffineShape::ShapeProcessingInfo &spInfo , const RayShapeIntersectionInfo &_iInfo ) {
-		// iInfo2 = _iInfo;
-		return true;
-	};
+	const AffineShape::RayIntersectionKernel rKernel = [&]( const AffineShape::ShapeProcessingInfo &spInfo , const RayShapeIntersectionInfo &_iInfo ) { return true; };
 	const AffineShape::ShapeProcessingInfo spInfo = AffineShape::ShapeProcessingInfo();
 	bool intersect = shapePtr->processFirstIntersection(shadowRay, range, rFilter, rKernel, spInfo, tIdx);
 	return intersect;
@@ -70,11 +68,21 @@ bool DirectionalLight::isInShadow( const RayShapeIntersectionInfo& iInfo , const
 
 Point3D DirectionalLight::transparency( const RayShapeIntersectionInfo &iInfo , const Shape &shape , Point3D cLimit , unsigned int samples , unsigned int tIdx ) const
 {
-	//////////////////////////////////////////////////////////
-	// Compute the transparency along the path to the light //
-	//////////////////////////////////////////////////////////
-	WARN_ONCE( "method undefined" );
-	return Point3D( 1. , 1. , 1. );
+	return Point3D(1, 1, 1);
+	// Compute the transparency along the path to the light
+	Point3D transparency = Point3D(1.0, 1.0, 1.0);
+	Ray3D shadowRay(iInfo.position, -_direction);
+	Shape *shapePtr = (Shape *) &shape;
+	const BoundingBox1D range = BoundingBox1D(1e-10, 1000000);
+	const AffineShape::RayIntersectionFilter rFilter = []( double ){ return true; };
+	const AffineShape::RayIntersectionKernel rKernel = [&]( const AffineShape::ShapeProcessingInfo &spInfo , const RayShapeIntersectionInfo &_iInfo ) -> bool {
+		transparency *= spInfo.material->transparent;
+		// return transparency.max() < cLimit.max();
+		return true;
+	};
+	const AffineShape::ShapeProcessingInfo spInfo = AffineShape::ShapeProcessingInfo();
+	shapePtr->processAllIntersections(shadowRay, range, rFilter, rKernel, spInfo, tIdx);
+	return transparency;
 }
 
 void DirectionalLight::drawOpenGL( int index , GLSLProgram * glslProgram ) const

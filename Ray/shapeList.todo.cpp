@@ -91,7 +91,6 @@ bool ShapeList::isInside( Point3D p ) const
 	return false;
 }
 
-/* Initialize the local-to-global position transform Ray::StaticAffineShape::_inverseTransform and the local-to-global normal transform */
 void ShapeList::init( const LocalSceneData &data )
 {
 	// Initialize the children
@@ -110,8 +109,8 @@ void ShapeList::init( const LocalSceneData &data )
 	// 	_bBox += s->boundingBox();
 	// }
 
-	// initialize inverse transform
-	_inverseTransform = Util::Matrix4D::Identity();
+
+
 }
 
 void ShapeList::updateBoundingBox( void )
@@ -181,14 +180,23 @@ void AffineShape::drawOpenGL( GLSLProgram * glslProgram ) const
 ///////////////////////
 // StaticAffineShape //
 ///////////////////////
+
+/* Initialize the local-to-global position transform Ray::StaticAffineShape::_inverseTransform and the local-to-global normal transform */
 void StaticAffineShape::init( const LocalSceneData &data )
 {
 	////////////////////////////////////////
 	// Do/replace the initialization here //
 	////////////////////////////////////////
-	_inverseTransform = Util::Matrix4D::Identity();
-	_normalTransform = Util::Matrix3D::Identity();
-	WARN_ONCE( "method undefined" );
+	// _inverseTransform = Util::Matrix4D::Identity();
+	// _normalTransform = Util::Matrix3D::Identity();
+	// WARN_ONCE( "method undefined" );
+
+	_inverseTransform = _localTransform.inverse();
+	_normalTransform = _localTransform.transpose().inverse();
+
+	// what to do here
+	// cout << "inverse transform: " << _inverseTransform << endl;
+
 
 	_shape->init( data );
 	_primitiveNum = _shape->primitiveNum();
