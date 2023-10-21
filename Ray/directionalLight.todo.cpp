@@ -27,10 +27,19 @@ Point3D DirectionalLight::getDiffuse( Ray3D ray , const RayShapeIntersectionInfo
 	// Get the diffuse contribution of the light here //
 	////////////////////////////////////////////////////
 
+	// check that ray is pointing into surface
+	// if (ray.direction.dot(iInfo.normal) > 0) {
+	// 	return Point3D(0, 0, 0);
+	// }
+
 	Point3D N = iInfo.normal;
 	Point3D L = -1 * _direction;
 	Point3D K_d = material.diffuse;
 	Point3D I = _diffuse; // intensity of light source after attenuation (should I be attenuating?)
+	Point3D ans = K_d * (N.dot(L)) * I;
+	// if (ans[0] < 0 || ans[1] < 0 || ans[2] < 0) {
+	// 	cout << "K_d " << K_d << " N " << N << " L " << L << " dot prod " << N.dot(L) << " I " << I << endl;
+	// }
 	return K_d * (N.dot(L)) * I;
 }
 
@@ -45,7 +54,9 @@ Point3D DirectionalLight::getSpecular( Ray3D ray , const RayShapeIntersectionInf
 	Point3D K_s = material.specular;
 	Point3D I = _specular;
 	double n = material.specularFallOff;
-	// cout << "K_s " << K_s << " V " << V << " R " << R << " dot prod " << V.dot(R) << " I " << I << endl;
+	if (K_s[0] > 1 || K_s[1] > 1 || K_s[2] > 1 || V[0] > 1 || V[1] > 1 || V[2] > 1 || R[0] > 1 || R[1] > 1 || R[2] > 1 || I[0] > 1 || I[1] > 1 || I[2] > 1) {
+		cout << "K_s " << K_s << " V " << V << " R " << R << " dot prod " << V.dot(R) << " I " << I << endl;
+	}
 	return K_s * pow(V.dot(R), n) * I;
 }
 
@@ -68,7 +79,6 @@ bool DirectionalLight::isInShadow( const RayShapeIntersectionInfo& iInfo , const
 
 Point3D DirectionalLight::transparency( const RayShapeIntersectionInfo &iInfo , const Shape &shape , Point3D cLimit , unsigned int samples , unsigned int tIdx ) const
 {
-	return Point3D(1, 1, 1);
 	// Compute the transparency along the path to the light
 	Point3D transparency = Point3D(1.0, 1.0, 1.0);
 	Ray3D shadowRay(iInfo.position, -_direction);

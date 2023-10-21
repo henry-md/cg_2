@@ -79,7 +79,17 @@ Point3D Scene::getColor( Ray3D ray , int rDepth , Point3D cLimit , unsigned int 
 			Light *light = lights[i];
 			color += light->getAmbient(ray, _iInfo2, *_spInfo.material);
 			Point3D transparency = light->transparency(_iInfo2, *this, Point3D(1, 1, 1), lightSamples, tIdx);
-			if (light->isInShadow(_iInfo2, *this, tIdx)) continue;
+			// if (light->isInShadow(_iInfo2, *this, tIdx)) {
+			// 	cout << "diffuse" << light->getDiffuse(ray, _iInfo2, *_spInfo.material) << " specular " << light->getSpecular(ray, _iInfo2, *_spInfo.material) << endl;
+			// };
+			Point3D diffuse = light->getDiffuse(ray, _iInfo2, *_spInfo.material);
+			if (diffuse[0] < 0 || diffuse[1] < 0 || diffuse[2] < 0) {
+				cout << "diffuse: " << diffuse << endl;
+				continue;
+			}
+			// if (transparency[0] != 1 || transparency[1] != 1 || transparency[2] != 1) {
+			// 	cout << "light transparency: " << transparency << endl;
+			// }
 			color += light->getDiffuse(ray, _iInfo2, *_spInfo.material) * transparency;
 			color += light->getSpecular(ray, _iInfo2, *_spInfo.material) * transparency;
 		}
