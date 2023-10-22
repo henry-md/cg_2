@@ -5,6 +5,7 @@
 using namespace Ray;
 using namespace Util;
 using namespace std;
+using namespace Image;
 
 ///////////
 // Scene //
@@ -49,6 +50,8 @@ bool Scene::Refract( Point3D v , Point3D n , double ir , Point3D& refract )
 // Util::Matrix4D localToGlobal , globalToLocal;
 // Util::Matrix3D directionGlobalToLocal , normalLocalToGlobal;
 
+/* modify the computation kernel getColor to support texture mapping (with bilinear interpolation of texture samples). That is, modulate the contribution of the emissive, ambient, diffuse, and specular terms by multiplying by the color sampled from the texture map */
+
 // called directly by the scene, which calls processFirstIntersection's
 Point3D Scene::getColor( Ray3D ray , int rDepth , Point3D cLimit , unsigned int lightSamples , unsigned int tIdx )
 {
@@ -71,6 +74,12 @@ Point3D Scene::getColor( Ray3D ray , int rDepth , Point3D cLimit , unsigned int 
 		_iInfo2.normal = _spInfo.normalLocalToGlobal * _iInfo.normal;
 		_iInfo2.normal /= _iInfo2.normal.length();
 
+		// const Texture* objTexture = _spInfo.material->tex;
+		// Point2D textureCoords = _iInfo.texture;
+		// Pixel32 textureColor;
+		// textureColor = objTexture->_image(textureCoords[0], textureCoords[1]);
+		Point3D textureColor = Point3D(1, 1, 1);
+
 		color += _spInfo.material->emissive;
 
 		// loop over light sources in scene
@@ -79,7 +88,7 @@ Point3D Scene::getColor( Ray3D ray , int rDepth , Point3D cLimit , unsigned int 
 			Light *light = lights[i];
 			color += light->getAmbient(ray, _iInfo2, *_spInfo.material);
 			Point3D transparency = light->transparency(_iInfo2, *this, Point3D(1, 1, 1), lightSamples, tIdx);
-			Point3D diffuse = light->getDiffuse(ray, _iInfo2, *_spInfo.material);
+			Point3D diffuse = light->getDiffuse(ray, _iInfo2, *_spInfo.material) * textureColor;
 			if (diffuse[0] < 0 || diffuse[1] < 0 || diffuse[2] < 0) {
 				// cout << "diffuse: " << diffuse << endl;
 				continue;

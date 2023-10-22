@@ -37,6 +37,7 @@ void Sphere::init( const LocalSceneData &data )
 	poly.coefficient(0u, 0u, 1u) = -2 * c;
 	poly.coefficient(0u, 0u, 0u) = pow(a, 2) + pow(b, 2) + pow(c, 2) - pow(r, 2);
 
+	updateBoundingBox();
 }
 void Sphere::updateBoundingBox( void )
 {
@@ -44,6 +45,11 @@ void Sphere::updateBoundingBox( void )
 	// Set the _bBox object here //
 	///////////////////////////////
 	WARN_ONCE( "method undefined" );
+
+	// cout << _bBox._p[0] << endl;
+	// cout << _bBox._p[1] << endl;
+	cout << "getting here" << endl;
+	cout << boundingBox() << endl;
 }
 void Sphere::initOpenGL( void )
 {
