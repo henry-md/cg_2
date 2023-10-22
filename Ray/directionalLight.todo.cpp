@@ -54,9 +54,6 @@ Point3D DirectionalLight::getSpecular( Ray3D ray , const RayShapeIntersectionInf
 	Point3D K_s = material.specular;
 	Point3D I = _specular;
 	double n = material.specularFallOff;
-	if (K_s[0] > 1 || K_s[1] > 1 || K_s[2] > 1 || V[0] > 1 || V[1] > 1 || V[2] > 1 || R[0] > 1 || R[1] > 1 || R[2] > 1 || I[0] > 1 || I[1] > 1 || I[2] > 1) {
-		cout << "K_s " << K_s << " V " << V << " R " << R << " dot prod " << V.dot(R) << " I " << I << endl;
-	}
 	return K_s * pow(V.dot(R), n) * I;
 }
 
@@ -87,7 +84,6 @@ Point3D DirectionalLight::transparency( const RayShapeIntersectionInfo &iInfo , 
 	const AffineShape::RayIntersectionFilter rFilter = []( double ){ return true; };
 	const AffineShape::RayIntersectionKernel rKernel = [&]( const AffineShape::ShapeProcessingInfo &spInfo , const RayShapeIntersectionInfo &_iInfo ) -> bool {
 		transparency *= spInfo.material->transparent;
-		// return transparency.max() < cLimit.max();
 		return true;
 	};
 	const AffineShape::ShapeProcessingInfo spInfo = AffineShape::ShapeProcessingInfo();

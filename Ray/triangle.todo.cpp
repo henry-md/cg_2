@@ -73,8 +73,6 @@ bool Triangle::processFirstIntersection( const Util::Ray3D &ray , const Util::Bo
 	/////////////////////////////////////////////////////////////
 	// Compute the intersection of the shape with the ray here //
 	/////////////////////////////////////////////////////////////
-	// WARN_ONCE( "method undefined" );
-	// return false;
 
 	// compute time to intersection
 	Point3D p0 = _v[0]->position;
@@ -102,7 +100,7 @@ bool Triangle::processFirstIntersection( const Util::Ray3D &ray , const Util::Bo
 	rsii.t = t;
 	rsii.position = p;
 	rsii.normal = n;
-	rsii.texture = Point2D(0, 0); // TODO: figure out how to get texture coords
+	rsii.texture = Point2D(0, 0);
 	rKernel(spInfo, rsii);
 	return true;
 }
