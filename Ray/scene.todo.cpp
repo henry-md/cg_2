@@ -79,14 +79,22 @@ Point3D Scene::getColor( Ray3D ray , int rDepth , Point3D cLimit , unsigned int 
 		// Pixel32 textureColor;
 		// textureColor = objTexture->_image(textureCoords[0], textureCoords[1]);
 		Point3D textureColor = Point3D(1, 1, 1);
+		if (_spInfo.material->tex != NULL) {
+			double texCoordX = _iInfo.texture[0] * (_spInfo.material->tex->_image.width() - 1);
+			double texCoordY = _iInfo.texture[1] * (_spInfo.material->tex->_image.height() - 1);
+			Point2D texCoord = Point2D(texCoordX, texCoordY);
+			Pixel32 texColor = _spInfo.material->tex->_image.bilinearSample(texCoord);
+			textureColor = Point3D(texColor.r, texColor.g, texColor.b) / 255.0;
+		}
+		
 
-		color += _spInfo.material->emissive;
+		color += _spInfo.material->emissive * textureColor;
 
 		// loop over light sources in scene
 		std::vector< Light * > lights = _globalData.lights;
 		for (int i = 0; i < lights.size(); i++) {
 			Light *light = lights[i];
-			color += light->getAmbient(ray, _iInfo2, *_spInfo.material);
+			color += light->getAmbient(ray, _iInfo2, *_spInfo.material) * textureColor;
 			Point3D transparency = light->transparency(_iInfo2, *this, Point3D(1, 1, 1), lightSamples, tIdx);
 			Point3D diffuse = light->getDiffuse(ray, _iInfo2, *_spInfo.material) * textureColor;
 			if (diffuse[0] < 0 || diffuse[1] < 0 || diffuse[2] < 0) {
@@ -94,19 +102,19 @@ Point3D Scene::getColor( Ray3D ray , int rDepth , Point3D cLimit , unsigned int 
 				continue;
 			}
 			color += diffuse * transparency;
-			color += light->getSpecular(ray, _iInfo2, *_spInfo.material) * transparency;
+			color += light->getSpecular(ray, _iInfo2, *_spInfo.material) * transparency * textureColor;
 		}
 
 		// reflection
 		if (ray.direction.dot(_iInfo2.normal) < 0) {
 			Ray3D reflectedRay = Ray3D(_iInfo2.position, Reflect(ray.direction, _iInfo2.normal));
-			color += getColor(reflectedRay, rDepth - 1, cLimit, lightSamples, tIdx) * _spInfo.material->specular;
+			color += getColor(reflectedRay, rDepth - 1, cLimit, lightSamples, tIdx) * _spInfo.material->specular * textureColor;
 		}
 
 		// refraction
 		Point3D refracted = ray.direction;
 		bool valid = Refract(ray.direction, _iInfo2.normal, _spInfo.material->ir, refracted);
-		if (valid) color += getColor(Ray3D(_iInfo2.position, refracted), rDepth - 1, cLimit, lightSamples, tIdx) * _spInfo.material->transparent;
+		if (valid) color += getColor(Ray3D(_iInfo2.position, refracted), rDepth - 1, cLimit, lightSamples, tIdx) * _spInfo.material->transparent * textureColor;
 
 		return true;
 	};

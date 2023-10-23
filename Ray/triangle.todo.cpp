@@ -100,7 +100,12 @@ bool Triangle::processFirstIntersection( const Util::Ray3D &ray , const Util::Bo
 	rsii.t = t;
 	rsii.position = p;
 	rsii.normal = n;
-	rsii.texture = Point2D(0, 0);
+
+	// texture stuff
+	Point2D texAlpha = _v[0]->texCoordinate * alpha;
+	Point2D texBeta = _v[1]->texCoordinate * beta;
+	Point2D texGamma = _v[2]->texCoordinate * gamma;
+	rsii.texture = (texAlpha + texBeta + texGamma);
 	rKernel(spInfo, rsii);
 	return true;
 }
