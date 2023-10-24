@@ -37,9 +37,15 @@ Point3D DirectionalLight::getDiffuse( Ray3D ray , const RayShapeIntersectionInfo
 	Point3D K_d = material.diffuse;
 	Point3D I = _diffuse; // intensity of light source after attenuation (should I be attenuating?)
 	Point3D ans = K_d * (N.dot(L)) * I;
-	// if (ans[0] < 0 || ans[1] < 0 || ans[2] < 0) {
-	// 	cout << "K_d " << K_d << " N " << N << " L " << L << " dot prod " << N.dot(L) << " I " << I << endl;
-	// }
+
+	if (rand() % 1000 == 0) {
+		cout << "----" << endl;
+		cout << "K_d " << K_d << endl;
+		cout << "dot prod " << (N.dot(L)) << endl;
+		cout << "I " << I << endl;
+		cout << K_d * (N.dot(L)) * I << endl;
+	}
+	// return Point3D(0, 1, 0);
 	return K_d * (N.dot(L)) * I;
 }
 

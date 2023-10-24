@@ -45,11 +45,6 @@ void Sphere::updateBoundingBox( void )
 	// Set the _bBox object here //
 	///////////////////////////////
 	WARN_ONCE( "method undefined" );
-
-	// cout << _bBox._p[0] << endl;
-	// cout << _bBox._p[1] << endl;
-	cout << "getting here" << endl;
-	cout << boundingBox() << endl;
 }
 void Sphere::initOpenGL( void )
 {

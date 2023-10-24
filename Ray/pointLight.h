@@ -31,6 +31,7 @@ namespace Ray
 		void _write( std::ostream &stream ) const;
 		void _read( std::istream &stream );
 	public:
+		Util::Point3D attenuate( Util::Point3D I , double d ) const;
 		std::string name( void ) const { return "point light"; }
 		Util::Point3D getAmbient ( Util::Ray3D ray , const class RayShapeIntersectionInfo& iInfo , const Material &material ) const;
 		Util::Point3D getDiffuse ( Util::Ray3D ray , const class RayShapeIntersectionInfo& iInfo , const Material &material ) const;

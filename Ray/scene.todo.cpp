@@ -102,6 +102,10 @@ Point3D Scene::getColor( Ray3D ray , int rDepth , Point3D cLimit , unsigned int 
 				continue;
 			}
 			color += diffuse * transparency;
+			if (rand() % 1000 == 0) {
+				cout << "diffuse component I got is " << diffuse << endl;
+				cout << "transparency is " << transparency;
+			}
 			color += light->getSpecular(ray, _iInfo2, *_spInfo.material) * transparency * textureColor;
 		}
 
@@ -129,6 +133,9 @@ Point3D Scene::getColor( Ray3D ray , int rDepth , Point3D cLimit , unsigned int 
 	// 	cout << "ray in scene.todo: " << ray.direction << endl;
 	// }
 
+	if (rand() % 1000 == 0) {
+		cout << "color " << color << endl;
+	}
 	return color;
 }
 
