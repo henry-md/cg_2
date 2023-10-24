@@ -20,9 +20,7 @@ Point3D PointLight::getAmbient( Ray3D ray , const RayShapeIntersectionInfo & iIn
 	////////////////////////////////////////////////////
 	// Get the ambient contribution of the light here //
 	////////////////////////////////////////////////////
-	// WARN_ONCE( "method undefined" );
-	// return Point3D();
-	// return _ambient + material.ambient;
+
 	return _ambient * material.ambient;
 }
 
@@ -31,13 +29,12 @@ Point3D PointLight::getDiffuse( Ray3D ray , const RayShapeIntersectionInfo &iInf
 	////////////////////////////////////////////////////
 	// Get the diffuse contribution of the light here //
 	////////////////////////////////////////////////////
-	// WARN_ONCE( "method undefined" );
-	// return Point3D();
+
 	Point3D N = iInfo.normal;
 	Point3D L = (_location - iInfo.position).unit();
 	Point3D K_d = material.diffuse;
-	Point3D I = _diffuse;
-	return K_d * (N.dot(L)); // no attenuation?
+	Point3D I = attenuate(_diffuse, (_location - iInfo.position).length());
+	return K_d * (N.dot(L)) * I;
 }
 
 Point3D PointLight::getSpecular( Ray3D ray , const RayShapeIntersectionInfo &iInfo , const Material &material ) const
@@ -50,7 +47,7 @@ Point3D PointLight::getSpecular( Ray3D ray , const RayShapeIntersectionInfo &iIn
 	Point3D V = -1 * ray.direction;
 	Point3D R = 2 * abs(iInfo.normal.dot(direction)) * (iInfo.normal) + direction;
 	Point3D K_s = material.specular;
-	Point3D I = _specular;
+	Point3D I = attenuate(_specular, (_location - iInfo.position).length());
 	double n = material.specularFallOff;
 	return K_s * pow(V.dot(R), n) * I;
 

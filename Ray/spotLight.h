@@ -51,6 +51,9 @@ namespace Ray
 		bool isInShadow( const class RayShapeIntersectionInfo& iInfo , const Shape &shape , unsigned int tIdx ) const;
 		Util::Point3D transparency( const class RayShapeIntersectionInfo &iInfo , const class Shape &shape , Util::Point3D cLimit , unsigned int samples , unsigned int tIdx ) const;
 		void drawOpenGL( int index , GLSLProgram * glslProgram ) const;
+
+		// my functions
+		Util::Point3D attenuate( Util::Point3D I, double d, Util::Point3D v) const;
 	};
 }
 #endif // SPOT_LIGHT_INCLUDED
