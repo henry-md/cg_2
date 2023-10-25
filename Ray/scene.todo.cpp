@@ -102,10 +102,10 @@ Point3D Scene::getColor( Ray3D ray , int rDepth , Point3D cLimit , unsigned int 
 				continue;
 			}
 			color += diffuse * transparency;
-			if (rand() % 1000 == 0) {
-				cout << "diffuse component I got is " << diffuse << endl;
-				cout << "transparency is " << transparency;
-			}
+			// if (rand() % 1000 == 0) {
+			// 	cout << "diffuse component I got is " << diffuse << endl;
+			// 	cout << "transparency is " << transparency;
+			// }
 			color += light->getSpecular(ray, _iInfo2, *_spInfo.material) * transparency * textureColor;
 		}
 
@@ -129,14 +129,6 @@ Point3D Scene::getColor( Ray3D ray , int rDepth , Point3D cLimit , unsigned int 
 
 	processFirstIntersection( ray , BoundingBox1D( Epsilon , Infinity ) , rFilter , rKernel , spInfo , tIdx );
 
-	// if ((ray.direction[0] - 0) < 0.1 && (ray.direction[1] + 0.707107) < 0.1 && (ray.direction[2] + 0.707107) < 0.1) {
-	// 	cout << "ray in scene.todo: " << ray.direction << endl;
-	// }
-
-	if (rand() % 1000 == 0) {
-		cout << "color " << color << endl;
-	}
-	return color;
 }
 
 //////////////

@@ -22,7 +22,7 @@
             margin: 0;
         }
         img {
-            width: 200px;
+            width: 500px;
         }
     </style>
 
@@ -38,20 +38,28 @@
 
     <hr>
 
-    <p>Screenshot of <code>./assignment1 --in F.bmp --bnMorph F_rotated.bmp f_single_line_translate_rotate.txt 0.5 --out out.bmp</code></p>
-    <img src="hdeutsc3_HTML/morph_f.png" alt="hdeutsc3.bmp">
 
-    <p>Screenshot of <code>./assignment1 --in F.bmp --bnMorph F_scaled_2d.bmp f_multi_line_scale.txt 0.5 --out out.bmp</code></p>
-    <img src="hdeutsc3_HTML/morph_f_2.png" alt="hdeutsc3.bmp">
+    <p>Henry Deutsch</p>
+    <p>hdeutsc3</p>
+    <p>Visual Studio 2019</p>
+    <p>Late days used: 1</p>
+    <p>Everything up until accelerated ray tracing is done + texture synthesis (28 pts of functions)</p>
+    <p>.h files changed:
+        <ul>
+            <li>Added 'attenuate' helper function to spot light and point light</li>
+            <li>Added 'poly' attribute to sphere.h</li>
+            <li>Added attributes in triangle.h to get normal</li>
 
-    <p>Screenshot of <code>./assignment1 --fun --in Images/sully.bmp --out Images/sully2.bmp</code> using a gaussian filter. I've since replaced the sampling call with a nearest point sampling (in case one of the TA's tries to run it on Yoda, I don't want to get points off for it taking too long)</p>
-    <p>This filter is of an inverse sin function mapping both x and y coordinates from the source to the destination.</p>
-    <img src="hdeutsc3_HTML/fun_filter.png" alt="hdeutsc3.bmp">
-    <hr>
+        </ul>
+    </p>
+    <p>Art contest ray file in ./hdeutsc3_HTML/art_ray.ray</p>
+    <p>Art contest ray file rendering:</p>
+    <p>(light inside the sphere)</p>
+    <img src="./hdeutsc3_HTML/art_ray.jpg" alt="Art Contest Ray File">
 
-    <p>Art contest submission</p>
-    <p>(an aesthetic failure on the way to implementing Beier-Neely morph)</p>
-    <img src="hdeutsc3_HTML/hdeutsc3.art.1.png" alt="hdeutsc3.bmp">
+    <p>Art contest png in ./Static3D/art_image.png</p>
+    <p>Failed implementation of diffuse color that made the sphere look kinda cool</p>
+    <img src="./hdeutsc3_HTML/art_image.png" alt="Art Contest Image">
     
 </body>
 </html>
