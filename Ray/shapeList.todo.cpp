@@ -15,7 +15,9 @@ void Difference::updateBoundingBox( void )
 	///////////////////////////////
 	// Set the _bBox object here //
 	///////////////////////////////
-	WARN_ONCE( "method undefined" );
+	
+	_shape0->updateBoundingBox();
+	_bBox = _shape0->boundingBox();
 }
 
 bool Difference::processFirstIntersection( const Ray3D &ray , const BoundingBox1D &range , const RayIntersectionFilter &rFilter , const RayIntersectionKernel &rKernel , ShapeProcessingInfo spInfo , unsigned int tIdx ) const

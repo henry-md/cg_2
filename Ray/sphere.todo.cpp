@@ -44,7 +44,9 @@ void Sphere::updateBoundingBox( void )
 	///////////////////////////////
 	// Set the _bBox object here //
 	///////////////////////////////
-	WARN_ONCE( "method undefined" );
+	
+	Point3D p( radius , radius , radius );
+	_bBox = BoundingBox3D( center-p , center+p );
 }
 void Sphere::initOpenGL( void )
 {

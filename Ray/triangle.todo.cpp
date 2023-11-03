@@ -52,7 +52,11 @@ void Triangle::updateBoundingBox( void )
 	///////////////////////////////
 	// Set the _bBox object here //
 	///////////////////////////////
-	WARN_ONCE( "method undefined" );
+	
+	Point3D pList[3];
+	for( int i=0 ; i<3 ; i++ ) pList[i] = _v[i]->position;
+	_bBox = BoundingBox3D( pList , 3 );
+	for( int i=0 ; i<3 ; i++ ) _bBox[0][i] -= Epsilon , _bBox[1][i] += Epsilon;
 }
 
 void Triangle::initOpenGL( void )

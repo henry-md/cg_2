@@ -28,7 +28,9 @@ void Torus::updateBoundingBox( void )
 	///////////////////////////////
 	// Set the _bBox object here //
 	///////////////////////////////
-	WARN_ONCE( "method undefined" );
+	
+	Point3D p( iRadius+oRadius , oRadius , iRadius+oRadius );
+	_bBox = BoundingBox3D( center-p , center+p );
 }
 void Torus::initOpenGL( void )
 {

@@ -29,7 +29,8 @@ void Box::updateBoundingBox( void )
 	///////////////////////////////
 	// Set the _bBox object here //
 	///////////////////////////////
-	WARN_ONCE( "method undefined" );
+	
+	_bBox = BoundingBox3D( center-(length/2) , center+(length/2) );
 }
 
 void Box::initOpenGL( void )
